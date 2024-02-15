@@ -1,0 +1,32 @@
+import json
+
+def dataset(json_file):
+    with open(json_file, 'r') as file:
+        data = json.load(file)
+    all_conversation = []
+    for plant in data.keys():
+        conversations = []
+        sample = {}
+        for disease in data[plant].keys():
+            for image in data[plant][disease].keys():
+                for key in data[plant][disease][image].keys():
+                    for i in range(2):
+                        if i % 2 == 0:
+                            element = {}
+                            element['from'] = 'user'
+                            element['value'] =  f"Picture 1: <img>{image}</img>\n{key}"
+
+                            conversations.append(element)
+                        else:
+                            element = {}
+                            element['from'] = 'assistant'
+                            element['value'] = data[plant][disease][image][key]
+                            conversations.append(element)
+
+        sample['id'] = plant
+        sample['conversations'] = conversations
+        all_conversation.append(sample)
+    breakpoint()
+
+if __name__ == '__main__':
+    dataset('output.json')
