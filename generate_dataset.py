@@ -1,6 +1,8 @@
 import json
+import os
+from utils import save_json, open_json
 
-def dataset(json_file):
+def dataset(json_file, root_dir):
     with open(json_file, 'r') as file:
         data = json.load(file)
     all_conversation = []
@@ -14,7 +16,7 @@ def dataset(json_file):
                         if i % 2 == 0:
                             element = {}
                             element['from'] = 'user'
-                            element['value'] =  f"Picture 1: <img>{image}</img>\n{key}"
+                            element['value'] =  f"Picture 1: <img>{os.path.join(root_dir, plant, disease, image)}</img>\n{key}"
 
                             conversations.append(element)
                         else:
@@ -26,7 +28,11 @@ def dataset(json_file):
         sample['id'] = plant
         sample['conversations'] = conversations
         all_conversation.append(sample)
-    breakpoint()
+    output_json = {}
+    output_json['list'] = all_conversation
+    
+    return output_json
 
 if __name__ == '__main__':
-    dataset('output.json')
+    req_json = dataset('output.json', root_dir= r'data\processed_images\images')
+    save_json(req_json, 'test')

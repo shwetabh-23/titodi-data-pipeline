@@ -35,10 +35,11 @@ def get_data(api_key, image_path, disease, plant, questions):
             ]
         }
         ],
-        "max_tokens": 300
+        "max_tokens": 1000
     }
 
     response = requests.post("https://api.openai.com/v1/chat/completions", headers=headers, json=payload)
+    breakpoint()
     return (response.json()['choices'][0]['message']['content'])
 
 def split_string(input_string):
@@ -57,7 +58,7 @@ def create_data_json(root_img_dir, questions, api_key):
         all_diseases = {}
         for disease in os.listdir(os.path.join(root_img_dir, plant)):
             all_conversations = {}
-            for image in os.listdir(os.path.join(root_img_dir, plant, disease))[0:2]:
+            for image in os.listdir(os.path.join(root_img_dir, plant, disease))[0:5]:
                 conversation = {}
                 answers = get_data(image_path= os.path.join(root_img_dir, plant, disease, image), disease= disease, plant= plant, questions=questions, api_key= api_key)
                 #breakpoint()
@@ -74,9 +75,9 @@ def create_data_json(root_img_dir, questions, api_key):
                     conversation[question3] = answer3
                     conversation[question4] = answer4
                     conversation[question5] = answer5
-                    all_conversations[image] = conversation
+                    all_conversations[root_img_dir + '/' + plant + '/' +  disease + '/' + image] = conversation
                 except:
-                    breakpoint()    
+                    continue   
                 all_diseases[disease] = all_conversations 
             all_plants[plant] = all_diseases
     return all_plants
@@ -89,6 +90,6 @@ def open_json(file_path):
     # Print the loaded dictionary (now in a prettified format)
     print(json.dumps(loaded_dict, indent=4))
 
-def save_json(file):
-    with open('output.json', 'w') as json_file:
+def save_json(file, name):
+    with open(f'{name}.json', 'w') as json_file:
         json.dump(file, json_file)

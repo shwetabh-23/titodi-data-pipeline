@@ -1,6 +1,5 @@
 from utils import create_data_json, save_json, open_json
 
-api_key = "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"
 
 root_img_dir = r'images/'
 questions = [
